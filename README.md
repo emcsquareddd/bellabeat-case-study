@@ -27,9 +27,9 @@ This dataset is available to download from [Kaggle](https://www.kaggle.com/datas
 #### Limitations:
 a. The dataset sample is small with only 35 users recorded. 
 b. This data is from 2016 and spans over only 2 months thus does not fully represent the current consumer market. 
-c. There are no demographics recorded in this dataset and as Bellabeat targets the women market, you can't identify whether these trends are from which gender and apply to Bellabeat.  
+c. There are no demographics recorded in this dataset and as Bellabeat targets the women market, you can't identify which gender these trends come from to apply to Bellabeat.  
 d. The daily sleep summary exists only for the second month, so sleep analysis is limited to that period.
-e. Reliability of dataset is low (Author states 30 users recorded but processing shows 35 users) - Analysis findings from Fitbit data will be treated as light indications instead of fact.
+e. The brief describes 30 users, but the data contains 35; minor, but noted as a discrepancy between documentation and the actual files. More importantly, the combination of small sample, short time span, age, and absent demographics means all findings from the Fitbit data are treated as light directional indications rather than firm conclusions.
 
 #### Selected FitBit files: mapping to Time's functions
 Bellabeat's Time watch tracks activity, sleep, and stress. Wearables do not measure stress directly, they infer it from physical signals such as heart rate (and heart-rate variability), supported by activity and sleep patterns, rather than from a user's thoughts or emotions. The Fitbit files selected below therefore cover all three of Time's functions:
@@ -52,6 +52,6 @@ The online questionnaire was open for data collection between November 2018 and 
 ##### **Combined Small Considerations**: 
 _The behavioural (Fitbit, 2016) and attitudinal (survey, 2018-2020) sources predate the current market. They are used to establish usage patterns and preferences, not as present-day measurements, and are supported by recent market statistics to confirm the broad trends still hold. As the two sources measure different things (behaviour vs attitudes) and are not directly merged, the difference in their collection periods does not affect the analysis._
 
-## Process
+### Process
 
-Uploaded files to BigQuery
+Tools used: Bigquery, Tableau
