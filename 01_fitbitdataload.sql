@@ -21,7 +21,7 @@ FROM `bellabeat.dailyActivity_m2_temp` LIMIT 5;
 INSERT INTO bellabeat.dailyActivity
 SELECT * FROM `bellabeat.dailyActivity_m2_temp`;
 
--- 8. Verify the new combined table to ensure date range matches
+-- 8. Verification query, run against each table. E.g.
   
 SELECT
   COUNT(*)           AS total_rows,
