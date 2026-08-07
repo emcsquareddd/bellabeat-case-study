@@ -1,5 +1,7 @@
 -- Convert all ActivityHour type to timestamps for hourlyIntensities, hourlyCalories, hourlySteps
--- 1. Conduct verification step to check the parse works on all rows
+-- 1. Conduct verification step to check the parse works on all rows for each table (edit table in query accordingly)
+-- Result: all tables returned 0 failed_parses, confirming every row parsed cleanly before building the clean tables.
+
 SELECT COUNT(*) AS total,
        COUNTIF(SAFE.PARSE_TIMESTAMP('%m/%d/%Y %I:%M:%S %p', ActivityHour) IS NULL) AS failed_parses
 FROM bellabeat.hourlyIntensities;
@@ -27,7 +29,7 @@ CREATE OR REPLACE TABLE bellabeat.dailySleep_clean AS
   TotalMinutesAsleep,
   TotalTimeInBed
 
-  FROM bellabeat.dailySleep
+  FROM bellabeat.dailySleep;
 
 -- For heartrateSeconds,same verification query, different query for new table creation. Collapses original 3.6m per second readings to approx. one row per user per day
 CREATE OR REPLACE TABLE bellabeat.heartrate_daily AS
@@ -43,3 +45,15 @@ GROUP BY Id, activity_date;
 -- Check after creation
 SELECT COUNT(*) AS user_days, COUNT(DISTINCT Id) AS users
 FROM bellabeat.heartrate_daily;
+
+-- Quality Check
+-- 1. dailySleep_clean
+SELECT
+  COUNT(*) AS total_rows,
+  COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, sleep_date)) AS duplicate_rows,
+  COUNTIF(TotalMinutesAsleep > TotalTimeInBed) AS asleep_exceeds_inbed,
+  COUNTIF(TotalSleepRecords > 1) AS multi_session_days,
+  COUNTIF(TotalMinutesAsleep = 0) AS zero_sleep_rows
+  FROM bellabeat.dailySleep_clean
+
+-- 2. 
