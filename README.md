@@ -44,6 +44,8 @@ hourlyCalories_merged.csv (both months)
 
 Minute-level files (including minuteMETs) were considered but excluded as redundant with the daily and hourly activity measures already selected, and too granular for the marketing focus of this analysis.
 
+[Data loaded onto BigQuery](01_fitbitdataload.sql)
+
 #### 2. Replication Data for: Dataset of motivational factors for using mobile health applications and systems
 This dataset is available to download from [dataverse](https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/AOQF05) (CC0: Public Domain)	
 "This dataset contains responses from a questionnaire about what motivates people to collect and share their health data for research and public health benefits. 
@@ -55,3 +57,78 @@ _The behavioural (Fitbit, 2016) and attitudinal (survey, 2018-2020) sources pred
 ### Process
 
 Tools used: Bigquery, Tableau
+#### Data Check & Clean
+
+**Date Standardisation**
+
+When loading the data into tables on BigQuery, the date & timestamps of most files could not be loaded without forcing the data type to be STRING.
+The first step I took during the cleaning process was to standardise the date & time of each file except for dailyActivity as that was parsed correctly. 
+
+In order to do so, I did a pre-check to ensure the parse works on all rows before committing to a table
+![](BBAssets/parse_template.png)
+
+Results:  
+![](BBAssets/hourlyCalories_pre.png)  
+hourlyCalories, hourlyIntensities & hourlySteps  
+
+![](BBAssets/heartRateSeconds_pre.png)  
+heartrateSeconds  
+
+![](BBAssets/dailySleep_pre.png)  
+dailySleep  
+
+With all failed_parses = 0, I went ahead and created cleaned tables.  
+![](BBAssets/Tables.png)  
+
+**Quality Check & Further Cleaning**  
+
+1. dailySleep  
+
+a. Ran a check for duplicates and zero activity entries.  
+![](BBAssets/dailySleep_check.png)  
+Result: 3 duplicate rows but no zero activity and no records where sleep exceeded time in bed. There are also 46 multi-session days but were kept to reflect real usage e.g naps or fragmented sleep.   
+![](BBAssets/dS_check_result.png)  
+
+b. Removed duplicate rows.  
+![](BBAssets/dS_clean.png)
+
+c. Checked to ensure duplicate rows were removed. 
+![](BBAssets/dS_clean_check.png)  
+Result: Duplicates removal confirmed  
+![](BBAssets/dS_clean_result.png)
+
+2. dailyActivity
+a. Check for duplicates and zero activity entries  
+![](BBAssets/dA_check.png)
+Result: 25 duplicate rows, 138 zero step days, 9 totally inactive days and 142 days that were recorded as full sedentary days. Decided to remove the duplicate rows first then run the check again to count non-wear days  
+![](BBAssets/dA_check_result.png)  
+
+b. Removed duplicate rows and created new column to show whether the tracker worn/not worn day.  
+![](BBAssets/dA_dedup1.png)  
+On the assumption that the duplicate rows were identical, I applied SELECT DISTINCT * to shorten the query.  
+
+c. Re-verification  
+![](BBAssets/dA_dedup1result.png)  
+Result: The duplicates remained
+
+d. Inspection to find the specific rows and looked into specific Id entries to see and compare full rows  
+![](BBAssets/dA_inspect1.png)  
+Result:  
+![](BBAssets/dA_inspect_result.png)  
+
+ID 1: 
+![](BBAssets/dA_id1.png)  
+![](BBAssets/dA_id1_result.png)  
+
+ID 2:
+![](BBAssets/dA_id2.png)  
+![](BBAssets/dA_id2_result.png)  
+
+This showed that the affected rows were not identical (hence why DISTINCT didn't work here) but were conflicting records:  
+the same user and date carrying different values (one fuller activity vs near-empty record). All 24 records fell on '2016-04-12', the day where the two source files overlapped.   
+
+e. Used QUALIFY ROW_NUMBER query to remove the conflicting rows instead  
+![](BBAssets/dA_dedup2.png)  
+
+f. Reverified results and successfully removed conflicting rows. This also lead to a fall in non_wear_days from 9 to 6
+![](BBAssets/dA_dedup2_result.png)
