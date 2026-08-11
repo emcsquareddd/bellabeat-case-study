@@ -44,7 +44,10 @@ hourlyCalories_merged.csv (both months)
 
 Minute-level files (including minuteMETs) were considered but excluded as redundant with the daily and hourly activity measures already selected, and too granular for the marketing focus of this analysis.
 
-[Data loaded onto BigQuery](01_fitbitdataload.sql)
+**Reproduction Logs**
+[Fitbit Data loaded onto BigQuery](01_fitbitdataload.sql)  
+[Fitbit Data Process & Clean](02_fitbitdataclean.sql)  
+
 
 #### 2. Replication Data for: Dataset of motivational factors for using mobile health applications and systems
 This dataset is available to download from [dataverse](https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/AOQF05) (CC0: Public Domain)	
@@ -108,7 +111,8 @@ b. Removed duplicate rows and created new column to show whether the tracker wor
 On the assumption that the duplicate rows were identical, I applied SELECT DISTINCT * to shorten the query.  
 
 c. Re-verification  
-![](BBAssets/dA_dedup1result.png)  
+![](BBAssets/dA_check2.png)  
+![](BBAssets/dA_check2_result.png)  
 Result: The duplicates remained
 
 d. Inspection to find the specific rows and looked into specific Id entries to see and compare full rows  
@@ -131,4 +135,5 @@ e. Used QUALIFY ROW_NUMBER query to remove the conflicting rows instead
 ![](BBAssets/dA_dedup2.png)  
 
 f. Reverified results and successfully removed conflicting rows. This also lead to a fall in non_wear_days from 9 to 6
-![](BBAssets/dA_dedup2_result.png)
+![](BBAssets/dA_dedup2_result.png)  
+
