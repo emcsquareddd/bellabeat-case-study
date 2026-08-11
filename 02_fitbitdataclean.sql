@@ -56,4 +56,71 @@ SELECT
   COUNTIF(TotalMinutesAsleep = 0) AS zero_sleep_rows
   FROM bellabeat.dailySleep_clean
 
--- 2. 
+-- 1a. Remove duplicates
+CREATE OR REPLACE TABLE bellabeat.dailySleep_clean AS
+SELECT
+  Id,
+  EXTRACT(DATE FROM PARSE_TIMESTAMP('%m/%d/%Y %I:%M:%S %p', SleepDay)) AS sleep_date,
+  TotalSleepRecords,
+  TotalMinutesAsleep,
+  TotalTimeInBed
+FROM bellabeat.dailySleep
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY Id, EXTRACT(DATE FROM PARSE_TIMESTAMP('%m/%d/%Y %I:%M:%S %p', SleepDay)), TotalMinutesAsleep, TotalTimeInBed
+  ORDER BY Id
+) = 1;
+
+--1b. Re-check if duplicates were removed
+SELECT COUNT(*) AS total_rows,
+       COUNT(*) - COUNT(DISTINCT FORMAT('%t|%t|%t|%t', Id, sleep_date, TotalMinutesAsleep, TotalTimeInBed)) AS remaining_dupes
+FROM bellabeat.dailySleep_clean;
+
+-- 2. dailyActivity
+SELECT 
+  COUNT(*) AS total_rows,
+  COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, ActivityDate)) AS duplicate_rows,
+  COUNTIF(TotalSteps = 0) AS zero_steps,
+  COUNTIF(TotalSteps = 0 AND Calories = 0) AS totally_inactive_days,
+  COUNTIF(SedentaryMinutes = 1440) AS all_day_sedentary
+
+FROM `bellabeat.dailyActivity`
+
+--2a. -- Remove conflicting duplicate records in dailyActivity.
+-- The 24 duplicates all fall on 2016-04-12, the overlap date between the two
+-- source files. They are not exact duplicates but conflicting records for the
+-- same user-day (one fuller record, one partial), so SELECT DISTINCT can't
+-- resolve them. QUALIFY keeps the higher-activity record per user-day.
+-- See process log for full diagnosis.
+CREATE OR REPLACE TABLE bellabeat.dailyActivity_clean AS
+SELECT
+  Id,
+  ActivityDate,
+  TotalSteps,
+  TotalDistance,
+  TrackerDistance,
+  LoggedActivitiesDistance,
+  VeryActiveDistance,
+  ModeratelyActiveDistance,
+  LightActiveDistance,
+  SedentaryActiveDistance,
+  VeryActiveMinutes,
+  FairlyActiveMinutes,
+  LightlyActiveMinutes,
+  SedentaryMinutes,
+  Calories,
+  CASE WHEN TotalSteps = 0 AND Calories = 0 THEN 'not worn' ELSE 'worn' END AS wear_status
+FROM bellabeat.dailyActivity
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY Id, ActivityDate
+  ORDER BY TotalSteps DESC
+) = 1;
+--2b. Re-check if conflicting duplicates were removed & recheck what the other columns show without the duplicates
+SELECT
+  COUNT(*) AS num_rows,
+  COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, ActivityDate)) AS duplicate_rows,     
+  COUNTIF(wear_status = 'not worn') AS non_wear_days,
+  COUNTIF(wear_status = 'worn') AS worn_days,
+  COUNTIF(TotalSteps = 0) AS zero_steps,
+  COUNTIF(SedentaryMinutes = 1440) AS all_day_sedentary
+  
+FROM `bellabeat.dailyActivity_clean`
