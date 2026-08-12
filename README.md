@@ -6,7 +6,8 @@ Bellabeat offers a variety of these smart products that are targeted towards wom
 Such as their own proprietary app that connects to their line of smart wellness products, a wellness tracker Leaf, a wellness watch Time, a smart water bottle Spring and their subscription-based membership programme.
 
 I am given the task, as a junior data analyst, to find out consumer usage patterns of smart devices and provide insight to inform one of our products' marketing strategies.
-## Ask
+<details>
+<summary><b>Ask</b></summary>
 ### Business Task
 Analyse how consumers use non-Bellabeat smart devices to identify usage trends, and apply those trends to one Bellabeat product to inform its marketing strategy.
 ### Stakeholders
@@ -16,8 +17,10 @@ Analyse how consumers use non-Bellabeat smart devices to identify usage trends, 
 ### Selected Product Focus
 Time - A tangible wearable that passively tracks user data without the manual input an app requires. I believe the absence of manual effort makes consumers more likely to adopt and stick with a wearable over an app, which typically relies on the user remembering to log. The Fitbit data, being automatically captured activity, heart rate, and sleep, 
 reflects exactly this kind of passive monitoring. Note: the dataset can't directly prove retention, so this is a market rationale for the product choice informed by the nature of the data (passive vs manual), rather than a finding the data demonstrates.
+</details> 
 
-## Prepare
+<details>
+<summary> <b>Prepare </b></summary>
 
 ### Data
 #### 1. FitBit Fitness Tracker Data
@@ -48,7 +51,6 @@ Minute-level files (including minuteMETs) were considered but excluded as redund
 [Fitbit Data loaded onto BigQuery](01_fitbitdataload.sql)  
 [Fitbit Data Process & Clean](02_fitbitdataclean.sql)  
 
-
 #### 2. Replication Data for: Dataset of motivational factors for using mobile health applications and systems
 This dataset is available to download from [dataverse](https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/AOQF05) (CC0: Public Domain)	
 "This dataset contains responses from a questionnaire about what motivates people to collect and share their health data for research and public health benefits. 
@@ -56,13 +58,17 @@ The online questionnaire was open for data collection between November 2018 and 
 
 ##### **Combined Small Considerations**: 
 _The behavioural (Fitbit, 2016) and attitudinal (survey, 2018-2020) sources predate the current market. They are used to establish usage patterns and preferences, not as present-day measurements, and are supported by recent market statistics to confirm the broad trends still hold. As the two sources measure different things (behaviour vs attitudes) and are not directly merged, the difference in their collection periods does not affect the analysis._
+</details>
 
-### Process
 
-Tools used: Bigquery, Tableau
-#### Data Check & Clean
+<details>
+  <summary><b>Process</b></summary>
 
-**Date Standardisation**
+
+### Data Check & Clean
+#### Fitbit Data
+<details> 
+  <summary><b>Date Standardisation</b></summary>
 
 When loading the data into tables on BigQuery, the date & timestamps of most files could not be loaded without forcing the data type to be STRING.
 The first step I took during the cleaning process was to standardise the date & time of each file except for dailyActivity as that was parsed correctly. 
@@ -83,7 +89,11 @@ dailySleep
 With all failed_parses = 0, I went ahead and created cleaned tables.  
 ![](BBAssets/Tables.png)  
 
-**Quality Check & Further Cleaning**  
+</details>
+
+<details>
+<summary><b>Quality Check & Further Cleaning</b></summary>  
+
 
 1. dailySleep  
 
@@ -100,10 +110,10 @@ c. Checked to ensure duplicate rows were removed.
 Result: Duplicates removal confirmed  
 ![](BBAssets/dS_clean_result.png)
 
-2. dailyActivity
-a. Check for duplicates and zero activity entries  
-![](BBAssets/dA_check.png)
-Result: 25 duplicate rows, 138 zero step days, 9 totally inactive days and 142 days that were recorded as full sedentary days. Decided to remove the duplicate rows first then run the check again to count non-wear days  
+2. dailyActivity  
+a. Check for duplicates and zero activity entries   
+![](BBAssets/dA_check.png)  
+Result: 24 duplicate rows, 138 zero step days, 9 totally inactive days and 142 days that were recorded as full sedentary days. Decided to remove the duplicate rows first then run the check again to count non-wear days  
 ![](BBAssets/dA_check_result.png)  
 
 b. Removed duplicate rows and created new column to show whether the tracker worn/not worn day.  
@@ -112,7 +122,7 @@ On the assumption that the duplicate rows were identical, I applied SELECT DISTI
 
 c. Re-verification  
 ![](BBAssets/dA_check2.png)  
-![](BBAssets/dA_check2_result.png)  
+![](BBAssets/da_check2_result.png)  
 Result: The duplicates remained
 
 d. Inspection to find the specific rows and looked into specific Id entries to see and compare full rows  
@@ -120,11 +130,11 @@ d. Inspection to find the specific rows and looked into specific Id entries to s
 Result:  
 ![](BBAssets/dA_inspect_result.png)  
 
-ID 1: 
+ID 1:  
 ![](BBAssets/dA_id1.png)  
 ![](BBAssets/dA_id1_result.png)  
 
-ID 2:
+ID 2:  
 ![](BBAssets/dA_id2.png)  
 ![](BBAssets/dA_id2_result.png)  
 
@@ -134,6 +144,77 @@ the same user and date carrying different values (one fuller activity vs near-em
 e. Used QUALIFY ROW_NUMBER query to remove the conflicting rows instead  
 ![](BBAssets/dA_dedup2.png)  
 
-f. Reverified results and successfully removed conflicting rows. This also lead to a fall in non_wear_days from 9 to 6
+f. Reverified results and successfully removed conflicting rows. This also lead to a fall in non_wear_days from 9 to 6 as some of the zero_records were counted from the empty half of the conflicting duplicate pair and the real record for those days showed the device was worn.   
 ![](BBAssets/dA_dedup2_result.png)  
 
+3. hourlyIntensities  
+a. Precheck  
+![](BBAssets/hI_check.png)  
+Result: 175 duplicate rows, 20,143 zero_intensity hours.  
+![](BBAssets/hI_check_result.png)  
+
+b. Likely the same conflicting 04-12-2016 overlap as prior table so ran further checks to investigate.  
+![](BBAssets/hI_check2.png)   
+![](BBAssets/hI_check2_result.png)  
+
+ID 1:  
+![](BBAssets/hI_Id1.png)  
+![](BBAssets/hI_Id1_result.png)  
+  
+ID 2: 
+![](BBAssets/hI_Id2.png)  
+![](BBAssets/hI_Id2_result.png)  
+
+c. With the duplicates being exact duplicates, used SELECT DISTINCT to remove them.  
+![](BBAssets/hI_dedup.png)  
+
+d. Final table check: no more duplicates and removal lead to a drop from total rows 46,183 to 46,008 and zero intensity hours 20,143 to 20,027.   
+![](BBAssets/hI_check3_result.png)  
+
+4. hourlySteps   
+a. Precheck  
+![](BBAssets/hS_check1.png)  
+Result: 175 duplicate rows, 20,597 zero step hours  
+![](BBAssets/hS_check1_result.png)  
+
+b. Repeat of further checks like before.  
+![](BBAssets/hS_check2.png)  
+![](BBAssets/hS_check2_result.png)  
+
+ID 1:  
+![](BBAssets/hS_Id1.png)   
+![](BBAssets/hS_Id1_result.png)  
+
+ID 2:  
+![](BBAssets/hS_Id2.png)  
+![](BBAssets/hS_Id2_result.png)  
+
+c. Identical duplicate rows again, used SELECT DISTINCT to dedup the table and then reverified the table with same check query  
+![](BBAssets/hS_dedup.png)  
+![](BBAssets/hS_dedup_result.png)  
+
+5. hourlyCalories
+a. Precheck
+![](BBAssets/hC_check1.png)  
+Result: Same 175 duplicate rows but 0 zero calorie hours
+![](BBAssets/hC_check1_result.png)  
+
+b. Further checks of duplicates. 
+![](BBAssets/hC_check2.png)  
+![](BBAssets/hC_check2_result.png)  
+
+ID 1:  
+![](BBAssets/hC_id1.png)  
+![](BBAssets/hC_id1_result.png)  
+
+ID 2:  
+![](BBAssets/hC_id2.png)  
+![](BBAssets/hC_id2_result.png)  
+
+c. Deduplicate rows and reverify without zero_calories_hours as that was 0  
+![](BBAssets/hC_dedup.png)   
+![](BBAssets/hC_dedup_check.png)   
+![](BBAssets/hC_dedup_result.png)   
+
+</details>
+</details>
