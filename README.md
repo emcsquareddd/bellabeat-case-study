@@ -8,13 +8,17 @@ Such as their own proprietary app that connects to their line of smart wellness 
 I am given the task, as a junior data analyst, to find out consumer usage patterns of smart devices and provide insight to inform one of our products' marketing strategies.
 <details>
 <summary><b>Ask</b></summary>
-### Business Task
-Analyse how consumers use non-Bellabeat smart devices to identify usage trends, and apply those trends to one Bellabeat product to inform its marketing strategy.
-### Stakeholders
-1. Urška Sršen
-2. Executive team
+<b>Business Task</b>  
+  
+Analyse how consumers use non-Bellabeat smart devices to identify usage trends, and apply those trends to one Bellabeat product to inform its marketing strategy.  
+
+<b>Stakeholders </b> 
+1. Urška Sršen  
+2. Executive team  
 3. Marketing Analytics team
-### Selected Product Focus
+
+<b>Selected Product Focus</b>
+
 Time - A tangible wearable that passively tracks user data without the manual input an app requires. I believe the absence of manual effort makes consumers more likely to adopt and stick with a wearable over an app, which typically relies on the user remembering to log. The Fitbit data, being automatically captured activity, heart rate, and sleep, 
 reflects exactly this kind of passive monitoring. Note: the dataset can't directly prove retention, so this is a market rationale for the product choice informed by the nature of the data (passive vs manual), rather than a finding the data demonstrates.
 </details> 
