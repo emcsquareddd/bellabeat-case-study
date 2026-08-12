@@ -110,7 +110,8 @@ c. Checked to ensure duplicate rows were removed.
 Result: Duplicates removal confirmed  
 ![](BBAssets/dS_clean_result.png)
 
-2. dailyActivity  
+2. dailyActivity
+
 a. Check for duplicates and zero activity entries   
 ![](BBAssets/dA_check.png)  
 Result: 24 duplicate rows, 138 zero step days, 9 totally inactive days and 142 days that were recorded as full sedentary days. Decided to remove the duplicate rows first then run the check again to count non-wear days  
@@ -123,7 +124,7 @@ On the assumption that the duplicate rows were identical, I applied SELECT DISTI
 c. Re-verification  
 ![](BBAssets/dA_check2.png)  
 ![](BBAssets/da_check2_result.png)  
-Result: The duplicates remained
+Result: The duplicates remained  
 
 d. Inspection to find the specific rows and looked into specific Id entries to see and compare full rows  
 ![](BBAssets/dA_inspect1.png)  
@@ -147,11 +148,11 @@ e. Used QUALIFY ROW_NUMBER query to remove the conflicting rows instead
 f. Reverified results and successfully removed conflicting rows. This also lead to a fall in non_wear_days from 9 to 6 as some of the zero_records were counted from the empty half of the conflicting duplicate pair and the real record for those days showed the device was worn.   
 ![](BBAssets/dA_dedup2_result.png)  
 
-3. hourlyIntensities  
+3. hourlyIntensities   
 a. Precheck  
-![](BBAssets/hI_check.png)  
-Result: 175 duplicate rows, 20,143 zero_intensity hours.  
-![](BBAssets/hI_check_result.png)  
+![](BBAssets/hI_check.png)   
+Result: 175 duplicate rows, 20,143 zero_intensity hours.   
+![](BBAssets/hI_check_result.png)   
 
 b. Likely the same conflicting 04-12-2016 overlap as prior table so ran further checks to investigate.  
 ![](BBAssets/hI_check2.png)   
@@ -161,7 +162,7 @@ ID 1:
 ![](BBAssets/hI_Id1.png)  
 ![](BBAssets/hI_Id1_result.png)  
   
-ID 2: 
+ID 2:  
 ![](BBAssets/hI_Id2.png)  
 ![](BBAssets/hI_Id2_result.png)  
 
@@ -169,7 +170,7 @@ c. With the duplicates being exact duplicates, used SELECT DISTINCT to remove th
 ![](BBAssets/hI_dedup.png)  
 
 d. Final table check: no more duplicates and removal lead to a drop from total rows 46,183 to 46,008 and zero intensity hours 20,143 to 20,027.   
-![](BBAssets/hI_check3_result.png)  
+![](BBAssets/hI_check3_result.png)   
 
 4. hourlySteps   
 a. Precheck  
@@ -178,10 +179,10 @@ Result: 175 duplicate rows, 20,597 zero step hours
 ![](BBAssets/hS_check1_result.png)  
 
 b. Repeat of further checks like before.  
-![](BBAssets/hS_check2.png)  
-![](BBAssets/hS_check2_result.png)  
+![](BBAssets/hS_check2.png)   
+![](BBAssets/hS_check2_result.png)   
 
-ID 1:  
+ID 1:   
 ![](BBAssets/hS_Id1.png)   
 ![](BBAssets/hS_Id1_result.png)  
 
@@ -193,15 +194,15 @@ c. Identical duplicate rows again, used SELECT DISTINCT to dedup the table and t
 ![](BBAssets/hS_dedup.png)  
 ![](BBAssets/hS_dedup_result.png)  
 
-5. hourlyCalories
-a. Precheck
+5. hourlyCalories  
+a. Precheck  
 ![](BBAssets/hC_check1.png)  
-Result: Same 175 duplicate rows but 0 zero calorie hours
+Result: Same 175 duplicate rows but 0 zero calorie hours  
 ![](BBAssets/hC_check1_result.png)  
 
-b. Further checks of duplicates. 
-![](BBAssets/hC_check2.png)  
-![](BBAssets/hC_check2_result.png)  
+b. Further checks of duplicates.  
+![](BBAssets/hC_check2.png)   
+![](BBAssets/hC_check2_result.png)   
 
 ID 1:  
 ![](BBAssets/hC_id1.png)  
@@ -217,4 +218,115 @@ c. Deduplicate rows and reverify without zero_calories_hours as that was 0
 ![](BBAssets/hC_dedup_result.png)   
 
 </details>
+
+#### Survey Data
+<details>
+<summary><b>Data Loading</b></summary>
+
+I loaded the below csv files onto Google Sheets:
+1. Responses.csv
+2. Question-metadata.csv  
+
+I've chosen to only use data from questions:  
+Q7 - How important are these features for you when choosing a wearable device? (Single, 1-4, +
+don’t know)  
+1 = Not important at all, 4 = very important  
+a. Sensor accuracy and range of values  
+b. Access to several types of data (multiple sensors)  
+c. Notifications from mobile phone (e.g. detection of early signs of disease)  
+d. Easy to use and quality of associated mobile app  
+e. Known or specific brand/price  
+f. Ergonomic and design (e.g. physical design/battery consumption)  
+g. Other features  
+
+Q8 - Which features would motivate you most to use a wearable sensor longer?  
+a. Relevant personalized feedback  
+b. Access to aggregated summarize data on the population level  
+c. Ease of use/non-disruptive  
+d. Social integration (e.g. Facebook, Run Keeper)  
+e. Don’t know  
+f. Other   
+
+Q9 - How important are these specific health related features for you when choosing a wearable
+device? (Single, 1-4, + don’t know)  
+1 = Not important at all, 4 = very important  
+a. Physical activity tracking (e.g. exercise features, heart rate/pulse tracking, fatigue,
+step counting, sleep tracking)  
+b. Manage disease (e.g. blood glucose, pulse, oxygen, hemoglobin)   
+c. Predicting and preventing symptom and health deterioration   
+d. Alerts when risky behavior/when approaching limits    
+
+Q10 - How important are these features when choosing a mobile health app? (Singe, 1-4, + I
+don’t know)  
+1 = Not important at all, 4 = very important  
+a. Simplicity/usability  
+b. Functionality/features  
+c. Price  
+d. Trust/security/privacy  
+e. Personalization (tailored features)   
+
+Q11 - How do you decide if a mobile app is trustworthy? (Multiple choice)  
+a. In terms of security, accuracy, and usefulness, etc.  
+b. Product specification/provider reputation  
+c. Personal experience or other people’s experiences  
+d. Certificate by independent organization/expert judgement  
+e. App rating in AppStore/GooglePlay  
+f. Other   
+
+Q13 - What motivates you to collect health data? (Choose 3)  
+a. Review and track progress/trend and symptoms (Know more about my health
+condition)  
+b. Share with others /show to my doctor (GP)  
+c. Compare/compete with others  
+d. Manage health and learn from previous patterns of behaviors  
+e. Receive personalized health feedback  
+f. Other    
+
+Q25 - What is your age?   
+
+Q26 - What is your gender? (male, female, other)  
+
+Q33 - When you want to download a mobile health app, how do you choose which one to
+download?  
+a. Suggestion from family/friends/other patients  
+b. Suggestion from health professionals  
+c. Supplier advertisement/health magazine/social media  
+d. Internet search (e.g. Google, Bing)  
+e. Experimentation (trying things yourself, participation in research)  
+f. Other   
+
+Q38 - How important are these criteria for you to agree to install an application that collects and shares data from your wearable?
+    (Single, 1-4, +I don’t know)  
+1 = Not important at all, 4 = very important  
+a. Automatic setup and easy to understand/use  
+b. Customizable feedback  
+c. Automatic data collection  
+d. Non-disturbing  
+e. Tailored data analysis and functionalities   
+
+<details>
+<summary>Data Extraction Map</summary>
+<b>Q - Q ID - Cols - Answer type</b> 
+  
+Q7 22-28 W-AC, Answers scale 1-4, Dont know or NA
+Q8 29-30 AD-AE, Answers 6 options or Open text for 'other'  
+Q9 31-34, AF-AI, Answers scale 1-4, Dont know or NA  
+Q10 35-39 AJ-AN, Answers scale 1-4, Dont know or NA  
+Q11 40-45 AO-AT, Answers 0) No, 1)Yes or Open text for 'other'  
+Q13 47-53 AV- BB,Answers 0) No, 1)Yes or Open text for 'other'  
+Q25 106 DC, 18-99 (I wanted to include this because we can maybe look all women backgrounds)  
+Q26 107 DD, 0)Male, 1) Female, 2) Other  
+Q33 116-122 DM-DS, Answers 0) No, 1)Yes or Open text for 'other'  
+Q38 136-140 EG-EK, Answers scale 1-4, Dont know or NA  
+ </details> 
+
+<b>Cleaning Steps</b>
+1. Selected corresponding columns and filtered by gender = female as women are Bellabeat's target market and this will provide a good sense of direction to what incentivises women to purchase products similar to Bellabeat's. Filtering to women yielded 528 respondents.    
+![](BBAssets/survey_query.png)  
+
+2. Used "Find & Replace" to convert all "Dont know" and "NA" values to empty cells so they're excluded from any averages.  
+   Converted: 3,821 "Dont know" | 15,125 "NA"
+   Note: values had to be replaced with genuinely empty cells rather than the text 'null', as text breaks numeric averaging.  
 </details>
+</details>
+
