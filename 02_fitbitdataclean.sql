@@ -54,7 +54,7 @@ SELECT
   COUNTIF(TotalMinutesAsleep > TotalTimeInBed) AS asleep_exceeds_inbed,
   COUNTIF(TotalSleepRecords > 1) AS multi_session_days,
   COUNTIF(TotalMinutesAsleep = 0) AS zero_sleep_rows
-  FROM bellabeat.dailySleep_clean
+  FROM bellabeat.dailySleep_clean;
 
 -- 1a. Remove duplicates
 CREATE OR REPLACE TABLE bellabeat.dailySleep_clean AS
@@ -83,7 +83,7 @@ SELECT
   COUNTIF(TotalSteps = 0 AND Calories = 0) AS totally_inactive_days,
   COUNTIF(SedentaryMinutes = 1440) AS all_day_sedentary
 
-FROM `bellabeat.dailyActivity`
+FROM `bellabeat.dailyActivity`;
 
 --2a. -- Remove conflicting duplicate records in dailyActivity.
 -- The 24 duplicates all fall on 2016-04-12, the overlap date between the two
@@ -123,4 +123,69 @@ SELECT
   COUNTIF(TotalSteps = 0) AS zero_steps,
   COUNTIF(SedentaryMinutes = 1440) AS all_day_sedentary
   
-FROM `bellabeat.dailyActivity_clean`
+FROM `bellabeat.dailyActivity_clean`;
+
+-- 3. hourlyIntensities
+SELECT
+  COUNT(*) AS num_rows,
+  COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, activity_hour)) AS duplicate_rows,     
+  COUNTIF(TotalIntensity = 0)  AS zero_intensity
+
+  
+FROM `bellabeat.hourlyIntensities_clean`;
+
+-- 3a. Remove duplicates - these were identical rows so SELECT DISTINCT will do the trick.
+CREATE OR REPLACE TABLE bellabeat.hourlyIntensities_clean AS
+  SELECT DISTINCT
+    Id,
+    activity_hour,
+    activity_date,
+    hour_of_day,
+    TotalIntensity,
+    AverageIntensity
+  
+FROM `bellabeat.hourlyIntensities_clean`;
+
+-- 3b. Run the same check query as above again and ensure duplicate_rows = 0
+
+-- 4. hourlySteps
+SELECT 
+COUNT(*) AS num_rows,
+COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, activity_hour)) AS duplicate_rows,
+COUNTIF(StepTotal = 0) AS zero_step_days
+
+FROM `bellabeat.hourlySteps_clean`;
+
+-- 4a. Remove duplicates (they were identical rows)
+CREATE OR REPLACE TABLE bellabeat.hourlySteps_clean AS
+SELECT DISTINCT
+Id,
+activity_hour,
+activity_date,
+hour_of_day,
+StepTotal
+
+FROM `bellabeat.hourlySteps_clean`;
+
+-- 4b. Run the same check again
+
+-- 5. hourlyCalories
+SELECT 
+COUNT(*) AS num_rows,
+COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, activity_hour)) AS duplicate_rows,
+COUNTIF(Calories = 0) AS zero_calorie_hours
+
+FROM `bellabeat.hourlyCalories_clean`
+
+-- 5a. Remove duplicates 
+CREATE OR REPLACE TABLE `bellabeat.hourlyCalories_clean` AS
+SELECT DISTINCT *
+FROM `bellabeat.hourlyCalories_clean`;
+
+-- 5b. Check again without zero_calorie_hours as there was originally 0.
+SELECT 
+COUNT(*) AS num_rows,
+COUNT(*) - COUNT(DISTINCT FORMAT ('%t|%t', Id, activity_hour)) AS duplicate_rows
+
+FROM `bellabeat.hourlyCalories_clean`;
+
