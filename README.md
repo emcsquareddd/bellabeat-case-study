@@ -506,7 +506,9 @@ Under each column of the cleaned data, used:
 - COUNT() - to see how many of the 528 respondents answered the question (Answers "Dont know", "NA" or blank cells are excluded from averages)
 - AVERAGE() - average score given
 - MAX() - Highest score given (to validate that no scores exceeded the scoring scale given to each question)
-And then I enlisted the help of Claude to map the results to all the questions and answer choices then converted them into readable tables
+And then I enlisted the help of Claude to map the results to all the questions and answer choices then converted them into readable tables. 
+
+Formulas used: [Survey Formulas](surveyformulas.txt)  
 
 Q7 - How important are these features for you when choosing a wearable device?  
 ![](BBAssets/survey_Q7.png)  
