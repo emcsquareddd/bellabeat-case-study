@@ -38,6 +38,8 @@ c. There are no demographics recorded in this dataset and as Bellabeat targets t
 d. The daily sleep summary exists only for the second month, so sleep analysis is limited to that period.
 e. The brief describes 30 users, but the data contains 35; minor, but noted as a discrepancy between documentation and the actual files. More importantly, the combination of small sample, short time span, age, and absent demographics means all findings from the Fitbit data are treated as light directional indications rather than firm conclusions.
 
+
+
 #### Selected FitBit files: mapping to Time's functions
 Bellabeat's Time watch tracks activity, sleep, and stress. Wearables do not measure stress directly, they infer it from physical signals such as heart rate (and heart-rate variability), supported by activity and sleep patterns, rather than from a user's thoughts or emotions. The Fitbit files selected below therefore cover all three of Time's functions:
 
@@ -51,10 +53,6 @@ hourlyCalories_merged.csv (both months)
 
 Minute-level files (including minuteMETs) were considered but excluded as redundant with the daily and hourly activity measures already selected, and too granular for the marketing focus of this analysis.
 
-**Reproduction Logs**
-[Fitbit Data loaded onto BigQuery](01_fitbitdataload.sql)  
-[Fitbit Data Process & Clean](02_fitbitdataclean.sql)  
-
 #### 2. Replication Data for: Dataset of motivational factors for using mobile health applications and systems
 This dataset is available to download from [dataverse](https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/AOQF05) (CC0: Public Domain)	
 "This dataset contains responses from a questionnaire about what motivates people to collect and share their health data for research and public health benefits. 
@@ -64,6 +62,8 @@ The online questionnaire was open for data collection between November 2018 and 
 _The behavioural (Fitbit, 2016) and attitudinal (survey, 2018-2020) sources predate the current market. They are used to establish usage patterns and preferences, not as present-day measurements, and are supported by recent market statistics to confirm the broad trends still hold. As the two sources measure different things (behaviour vs attitudes) and are not directly merged, the difference in their collection periods does not affect the analysis._
 </details>
 
+**Tools used:**  
+BigQuery, Sheets, Tableau, and AI assistance for SQL syntax, result mapping and review 
 
 <details>
   <summary><b>Process</b></summary>
@@ -71,6 +71,13 @@ _The behavioural (Fitbit, 2016) and attitudinal (survey, 2018-2020) sources pred
 
 ### Data Check & Clean
 #### Fitbit Data
+*Reproduction Logs*  
+[Fitbit Data loaded onto BigQuery](01_fitbitdataload.sql)  
+[Fitbit Data Process & Clean](02_fitbitdataclean.sql)  
+[Fitbit Data Prep & Analysis](03_fitbitdata_prepandanalyse.sql)
+
+#### Survey Data
+
 <details> 
   <summary><b>Date Standardisation</b></summary>
 
@@ -223,6 +230,35 @@ c. Deduplicate rows and reverify without zero_calories_hours as that was 0
 
 </details>
 
+<details>
+  <Summary><b>Data Prep</b></Summary>  
+  
+  This was actually initiated when starting analysis. The result gave indication that most participants didn't start on 12th March but rather 1st April.   
+1. I first checked the date range of dailyActivity and ensured there were no duplicate rows per-user-per-day. This search lead the result of 23 out of 35 users that start 1st April.   
+  
+   ![](BBAssets/Q1_databoundary.png)  
+   ![](BBAssets/Q1_databoundary_result.png)  
+2. Looked into individual user data i.e. when they first started and stopped appearing in the data.  
+  ![](BBAssets/Q1_individual.png)  
+  ![](BBAssets/Q1_individual_result.png)  
+  
+3. Did further checking for all other tables in the data set to confirm. 
+  ![](BBAssets/MinMax_allTables.png)  
+  ![](BBAssets/MinMax_allTables_result.png)
+
+4. Brokedown all date data to see how many users each date had  
+  ![](BBAssets/Enrolment.png)  
+  ![](BBAssets/Enrolment_result1.png) ![](BBAssets/Enrolment_result2.png)  
+
+6. Checked to see if hourly data exists for days missing from dailyActivity in case actually tracked days were dropped during cleaning  
+   ![](BBAssets/Validation2.png)  
+   ![](BBAssets/Validation2_result.png)  
+   Result: all 593 sat before the window across 31 users which confirms that the gap is due to late enrolment and not a cleaning error
+
+  <b>Conclusion</b>
+  Analysis window: 12 April – 12 May 2016 (31 days). Full enrolment across all users, and the only period where activity, sleep and heart-rate data coexist. Note that coverage differs by data type: activity 35 users, sleep 24, heart rate 15 — so sleep and heart-rate findings describe subsets, not the full sample.     
+</details>
+
 #### Survey Data
 <details>
 <summary><b>Data Loading</b></summary>
@@ -312,16 +348,16 @@ e. Tailored data analysis and functionalities
 <summary>Data Extraction Map</summary>
 <b>Q - Q ID - Cols - Answer type</b> 
   
-Q7 22-28 W-AC, Answers scale 1-4, Dont know or NA
-Q8 29-30 AD-AE, Answers 6 options or Open text for 'other'  
-Q9 31-34, AF-AI, Answers scale 1-4, Dont know or NA  
-Q10 35-39 AJ-AN, Answers scale 1-4, Dont know or NA  
-Q11 40-45 AO-AT, Answers 0) No, 1)Yes or Open text for 'other'  
-Q13 47-53 AV- BB,Answers 0) No, 1)Yes or Open text for 'other'  
-Q25 106 DC, 18-99 (I wanted to include this because we can maybe look all women backgrounds)  
-Q26 107 DD, 0)Male, 1) Female, 2) Other  
-Q33 116-122 DM-DS, Answers 0) No, 1)Yes or Open text for 'other'  
-Q38 136-140 EG-EK, Answers scale 1-4, Dont know or NA  
+Q7 - 22-28 - W-AC - Answers scale 1-4, Dont know or NA  
+Q8 - 29-30 - AD-AE - Answers 6 options or Open text for 'other'  
+Q9 - 31-34 - AF-AI - Answers scale 1-4, Dont know or NA  
+Q10 - 35-39 -  AJ-AN - Answers scale 1-4, Dont know or NA  
+Q11 - 40-45 - AO-AT - Answers 0) No, 1)Yes or Open text for 'other'  
+Q13 - 47-53 - AV- BB - Answers 0) No, 1)Yes or Open text for 'other'  
+Q25 - 106 - DC - 18-99 (I wanted to include this because we can maybe look all women backgrounds)  
+Q26 - 107 - DD -  0)Male, 1) Female, 2) Other  
+Q33 - 116-122 - DM-DS - Answers 0) No, 1)Yes or Open text for 'other'  
+Q38 - 136-140 - EG-EK - Answers scale 1-4, Dont know or NA  
  </details> 
 
 <b>Cleaning Steps</b>
@@ -332,5 +368,183 @@ Q38 136-140 EG-EK, Answers scale 1-4, Dont know or NA
    Converted: 3,821 "Dont know" | 15,125 "NA"
    Note: values had to be replaced with genuinely empty cells rather than the text 'null', as text breaks numeric averaging.  
 </details>
+
 </details>
 
+### Analysis
+<details>
+<summary><b>Fitbit Analysis</b></summary>  
+
+Q1. Wear consistency, how many days out of the tracked period do people actually wear the device?  
+  1. Created a view generating every user-day combination in the window, so days with no data are counted as non-wear rather than silently ignored  
+  ![](BBAssets/Q1_viewcreation.png)  
+
+  2. Split wear results into different bands to categorise wear consistency between users  
+  ![](BBAssets/Q1_banded.png)  
+  ![](BBAssets/Q1_banded_result.png)
+
+  3. Looked into the mean & median for all 35 users and also 33 users (as 2 users stopped syncing tracker data before 2016-04-12)  
+  ![](BBAssets/Q1_mean_median.png)  
+  ![](BBAssets/Q1_mean_median_result.png)  
+  
+Results:
+- 19 of 35 users (54%) wore the device on all 31 days
+- 29 of 33 active users (88%) wore it at least 80% of days.
+- Median wear: 100%. Mean: 91.5% among active users, 86.3% including dropouts.
+- 2 users (6%) stopped syncing before the window and never returned.
+- Only 4 users sit between 12% and 65% — the middle is nearly empty
+- days_with_data and days_worn were identical for all but four users, so inside the window non-wear almost never means 'device worn but inactive', it means no data at all.  
+
+Finding: users either wear their device near-daily or stop syncing entirely. Only 4 of 35 sit anywhere in the middle. This is why mean and median diverge: the median reflects the typical user, the mean is pulled by a small tail.  
+
+Limitation: a 31-day window shows in-window consistency only; it cannot speak to long-term retention.  
+
+Q2. Weekly patterns: does device wear hold consistent across the week, and does activity vary by day?  
+  1. Wear by day of week
+  ![](BBAssets/Q2_daysperweek.png)  
+  ![](BBAssets/Q2_daysperweek_result.png)  
+
+  2. Activity by day of week
+  ![](BBAssets/Q2_activitiesbyday.png)
+  ![](BBAssets/Q2_activitiesbyday_result.png)  
+
+Results:  
+Wear by day:  
+- Range: 82.9% (Thu) to 90.0% (Fri) — a 7-point spread  
+- Weekend: Sat 87.9%, Sun 86.4%  
+- Thursday's low likely reflects the window's final day rather than a day-of-week effect  
+
+Activity by day:  
+- Saturday is the most active day (8,219 steps), Sunday the least (6,933) - 19% gap, showing the weekend is not a single behaviour   
+- Sunday is a consistent rest day across all activity measures, while wear remains high (86.4%), i.e. users keep the device on but move less   
+- Monday is the most sedentary day (1,028 mins)  
+
+Finding: wear and activity behave independently. The device stays on all week including weekends, but movement drops sharply on Sunday — users keep wearing it on the day they're least active. This is an engagement opportunity rather than a retention problem: the data is still being captured, so a rest-day or recovery framing has an audience that a step-based prompt does not.
+
+Q3. Feature adoption: how many users engage with each tracking layer?
+
+Answered by the table coverage check in Data Validation (step 3) — no additional query required.
+
+Results:
+
+Activity: 35 of 35 users (100%)
+Sleep: 24 of 35 (69%)
+Heart rate: 15 of 35 (43%)
+
+Finding: adoption falls away sharply beyond basic activity tracking. Every user generates step and activity data, but under half produce heart-rate data and only around a third track sleep consistently (Q5). Each layer beyond steps loses roughly a third of the base. The richest health signals — sleep and heart rate — reach the fewest users, which is precisely the gap a single always-on device is positioned to close.
+
+Limitation: the dataset spans multiple Fitbit models with differing capabilities, so the gradient reflects a mix of device capability and user behaviour. It cannot be attributed to user choice alone.
+
+Q4. Time-of-day activity: when across the day are people active?
+ ![](BBAssets/Q4_stepsactivity.png)  
+ ![](BBAssets/Q4_stepsactivity_result.png)  
+Results:  
+- Activity spans 6am–9pm, with every hour in that range averaging 178+ steps and eleven consecutive hours above 400  
+- Peak: 6pm (599 steps), followed by 7pm (583) and 5pm (550)  
+- Secondary midday cluster, 12–2pm (~540 steps)  
+- Overnight (midnight–5am) averages under 45 steps, with 76–86% of hours recording none  
+- Sample size even across all hours (903–934 user-hours), confirming the device records continuously  
+
+Finding: movement is distributed across the whole waking day rather than concentrated in a workout window. No single hour dominates, and the strongest period (5–7pm) accounts for only a modest share of daily steps. Most activity is incidental — commuting, errands, moving around — which is exactly what manual logging misses and passive tracking captures. The evening peak also identifies 5–7pm as the highest-engagement window for notifications or prompts.  
+
+Note: timestamps are stored as UTC but peak times align with normal waking patterns, indicating local time. Treated as local.  
+
+Q5. Sleep behaviour: how many users record sleep, and how consistently?
+ 1. Daily minute totals: distribution across worn days
+ ![](BBAssets/Q5_activitydistribution.png)
+ ![](BBAssets/Q5_activitydistribution_result.png)
+
+ 2. Daily minute totals: average per user  
+ ![](BBAssets/Q5_useractdist.png)  
+ ![](BBAssets/Q5_useractdist_result.png)  
+ These totals were initially read as wear duration — suggesting 55% of users wore the device overnight. Cross-referencing with sleep tracking (step 3) showed the opposite: the users with the lowest minute totals track sleep most. Sleep minutes are excluded from daily activity totals, so these figures indicate whether sleep was recorded, not how long the device was worn. Step 4 verifies this — activity minutes plus time in bed sum to ~1,440 on complete days.  
+ 
+ 4. Sleep tracking per user  
+ ![](BBAssets/sleepactivity.png)  
+ ![](BBAssets/sleepactivity_result.png)  
+ 
+ 5. To confirm sleep+activeMinutes mechanism  
+ ![](BBAssets/verification.png)  
+ ![](BBAssets/verification_result.png)
+
+Results:  
+- 24 of 35 users (69%) recorded sleep at least once; 11 (31%) never did  
+- Only 10 of 35 (29%) tracked sleep on 80%+ of nights  
+- 3 users (9%) tracked every night  
+- 8 of the 24 trackers logged 5 nights or fewer  
+- Among consistent trackers, average sleep was 6–8 hours per night  
+
+Finding: daily wear is near-total but overnight tracking is the exception. 54% of users wore the device every single day, yet fewer than a third tracked sleep consistently. The passive daytime layer is already working; the overnight layer — Time's actual differentiator — is largely unused.
+
+Limitations: users with fewer than ~5 nights show implausible averages (1–2 hours), likely naps or partial records. The dataset spans multiple Fitbit models, some of which cannot track sleep — so part of the 31% may reflect device capability rather than user choice.
+
+</details>
+<details>
+ <summary><b>Survey Data</b></summary>  
+
+Data description: Survey of 814 respondents, filtered to women (Q26 = 1): 528 respondents. Age range 18–98, median 41.  
+Limitations: The survey samples health-tracking and chronic-disease populations rather than a general consumer sample, so preferences are directional for Bellabeat's market rather than representative of it.  
+  
+Attitudinal 1: What features do women rate most important in a wearable and an app?  
+Attitudinal 2: What motivates longer use and how women do choose health apps?  
+
+**Findings:**  
+1. **Accuracy and simplicity beat brand and price**  
+Ranked consistently across wearable features, app features and installation criteria. Brand/price ranks last for every age group evidence by the near-no gap in age difference.  
+2. **Design is the biggest age divide**  
+Under 45s rate ergonomics/design third (3.03) against fifth place (2.52) for 45+. That's a 0.51 gap which is the largest in the data.
+
+3. **Retention is driven by personalised feedback and low effort - not social features**
+41% and 40% respectively; social integration chosen by 2% and only 8% cite comparison as a motivation in Q13
+
+4. **Advertising is the weakest discovery channel for health apps**
+9% choose apps via advertising or social media, against 50% who try things themselves and 41% who follow a health professional's recommendation. Trust comes from personal experience (58%) and independent certification (51%).  
+
+**Analysis steps:**   
+
+Under each column of the cleaned data, used:
+- COUNT() - to see how many of the 528 respondents answered the question (Answers "Dont know", "NA" or blank cells are excluded from averages)
+- AVERAGE() - average score given
+- MAX() - Highest score given (to validate that no scores exceeded the scoring scale given to each question)
+And then I enlisted the help of Claude to map the results to all the questions and answer choices then converted them into readable tables
+
+Q7 - How important are these features for you when choosing a wearable device?  
+![](BBAssets/survey_Q7.png)  
+
+Q7 by age group  
+![](BBAssets/survey_Q7age.png)  
+![](BBAssets/survey_Q7age_rank.png)  
+Note: nine respondents omitted age, so age-segmented figures exclude them  
+
+Q8 - Which features would motivate you most to use a wearable sensor longer?  
+![](BBAssets/survey_Q8.png)  
+
+Q8 by age group  
+![](BBAssets/survey_Q8age.png)  
+Note: nine respondents omitted age, so age-segmented figures exclude them  
+
+Q9 - How important are these specific health related features for you when choosing a wearable
+device?  
+![](BBAssets/survey_Q9.png)
+
+Q10 - How important are these features when choosing a mobile health app?  
+![](BBAssets/survey_Q10.png)  
+
+Q11 - How do you decide if a mobile app is trustworthy?  
+![](BBAssets/survey_Q11.png)  
+
+Q13 - What motivates you to collect health data?  
+![](BBAssets/survey_Q13.png) 
+
+Q33 - When you want to download a mobile health app, how do you choose which one to
+download?  
+![](BBAssets/survey_Q33.png)  
+
+Q38 - How important are these criteria for you to agree to install an application that collects and shares data from your wearable?  
+![](BBAssets/survey_Q38.png)  
+
+  i. For Q8, as it is a single choice between six options, I used COUNTIF() for each score.
+ ii. For Q25, did an age breakdown
+ ![](BBAssets/survey_age.png)  
+  
+</details>
