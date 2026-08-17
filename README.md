@@ -19,8 +19,10 @@ Analyse how consumers use non-Bellabeat smart devices to identify usage trends, 
 
 <b>Selected Product Focus</b>
 
-Time - A tangible wearable that passively tracks user data without the manual input an app requires. I believe the absence of manual effort makes consumers more likely to adopt and stick with a wearable over an app, which typically relies on the user remembering to log. The Fitbit data, being automatically captured activity, heart rate, and sleep, 
-reflects exactly this kind of passive monitoring. Note: the dataset can't directly prove retention, so this is a market rationale for the product choice informed by the nature of the data (passive vs manual), rather than a finding the data demonstrates.
+Time - A tangible wearable that passively tracks user data without the manual input an app requires. I believe the absence of manual effort makes passive capture more likely to be sustained rather than logging that relies on the user remembering - the analysis that follows tests this rationale. The Fitbit data, being automatically captured activity and sleep data, reflects exactly this kind of passive monitoring.
+As Time is bundled with the Bellabeat app as that is where the data syncs to, the analysis will also look into health apps as part of the connected experience. 
+Note: the dataset cannot demonstrate retention directly, so this is a market rationale for the product choice, informed by the nature of the data (passive versus manual) rather than a finding the data proves.
+
 </details> 
 
 <details>
@@ -371,7 +373,8 @@ Q38 - 136-140 - EG-EK - Answers scale 1-4, Dont know or NA
 
 </details>
 
-### Analysis
+<details> 
+  <summary><b>Analysis</b></summary>
 <details>
 <summary><b>Fitbit Analysis</b></summary>  
 
@@ -392,7 +395,7 @@ Results:
 - 29 of 33 active users (88%) wore it at least 80% of days.
 - Median wear: 100%. Mean: 91.5% among active users, 86.3% including dropouts.
 - 2 users (6%) stopped syncing before the window and never returned.
-- Only 4 users sit between 12% and 65% — the middle is nearly empty
+- Only 4 users sit between 12% and 65% - the middle is nearly empty
 - days_with_data and days_worn were identical for all but four users, so inside the window non-wear almost never means 'device worn but inactive', it means no data at all.  
 
 Finding: users either wear their device near-daily or stop syncing entirely. Only 4 of 35 sit anywhere in the middle. This is why mean and median diverge: the median reflects the typical user, the mean is pulled by a small tail.  
@@ -400,11 +403,11 @@ Finding: users either wear their device near-daily or stop syncing entirely. Onl
 Limitation: a 31-day window shows in-window consistency only; it cannot speak to long-term retention.  
 
 Q2. Weekly patterns: does device wear hold consistent across the week, and does activity vary by day?  
-  1. Wear by day of week
+  1. Wear by day of week  
   ![](BBAssets/Q2_daysperweek.png)  
   ![](BBAssets/Q2_daysperweek_result.png)  
 
-  2. Activity by day of week
+  2. Activity by day of week  
   ![](BBAssets/Q2_activitiesbyday.png)
   ![](BBAssets/Q2_activitiesbyday_result.png)  
 
@@ -415,27 +418,26 @@ Wear by day:
 - Thursday's low likely reflects the window's final day rather than a day-of-week effect  
 
 Activity by day:  
-- Saturday is the most active day (8,219 steps), Sunday the least (6,933) - 19% gap, showing the weekend is not a single behaviour   
+- Saturday is the most active day (8,219 steps), Sunday the least (6,933). A 19% gap, showing the weekend is not a single behaviour   
 - Sunday is a consistent rest day across all activity measures, while wear remains high (86.4%), i.e. users keep the device on but move less   
 - Monday is the most sedentary day (1,028 mins)  
 
-Finding: wear and activity behave independently. The device stays on all week including weekends, but movement drops sharply on Sunday — users keep wearing it on the day they're least active. This is an engagement opportunity rather than a retention problem: the data is still being captured, so a rest-day or recovery framing has an audience that a step-based prompt does not.
+Finding: wear and activity behave independently. The device stays on all week including weekends, but movement drops sharply on Sunday showcasing that users keep wearing it even on the day they're least active. This is an engagement opportunity rather than a retention problem: the data is still being captured, so a rest-day or recovery framing has an audience that a step-based prompt does not.
 
 Q3. Feature adoption: how many users engage with each tracking layer?
 
 Answered by the table coverage check in Data Validation (step 3) — no additional query required.
 
 Results:
-
-Activity: 35 of 35 users (100%)
-Sleep: 24 of 35 (69%)
-Heart rate: 15 of 35 (43%)
+Activity: 35 of 35 users (100%)  
+Sleep: 24 of 35 (69%)  
+Heart rate: 15 of 35 (43%)  
 
 Finding: adoption falls away sharply beyond basic activity tracking. Every user generates step and activity data, but under half produce heart-rate data and only around a third track sleep consistently (Q5). Each layer beyond steps loses roughly a third of the base. The richest health signals — sleep and heart rate — reach the fewest users, which is precisely the gap a single always-on device is positioned to close.
 
 Limitation: the dataset spans multiple Fitbit models with differing capabilities, so the gradient reflects a mix of device capability and user behaviour. It cannot be attributed to user choice alone.
 
-Q4. Time-of-day activity: when across the day are people active?
+Q4. Time-of-day activity: when across the day are people active?  
  ![](BBAssets/Q4_stepsactivity.png)  
  ![](BBAssets/Q4_stepsactivity_result.png)  
 Results:  
@@ -460,12 +462,12 @@ Q5. Sleep behaviour: how many users record sleep, and how consistently?
  These totals were initially read as wear duration — suggesting 55% of users wore the device overnight. Cross-referencing with sleep tracking (step 3) showed the opposite: the users with the lowest minute totals track sleep most. Sleep minutes are excluded from daily activity totals, so these figures indicate whether sleep was recorded, not how long the device was worn. Step 4 verifies this — activity minutes plus time in bed sum to ~1,440 on complete days.  
  
  4. Sleep tracking per user  
- ![](BBAssets/sleepactivity.png)  
- ![](BBAssets/sleepactivity_result.png)  
+ ![](BBAssets/Q5_sleepactivity.png)  
+ ![](BBAssets/Q5_sleepactivity_result.png)  
  
  5. To confirm sleep+activeMinutes mechanism  
- ![](BBAssets/verification.png)  
- ![](BBAssets/verification_result.png)
+ ![](BBAssets/Q5_verification.png)  
+ ![](BBAssets/Q5_verification_result.png)
 
 Results:  
 - 24 of 35 users (69%) recorded sleep at least once; 11 (31%) never did  
@@ -550,3 +552,46 @@ Q38 - How important are these criteria for you to agree to install an applicatio
  ![](BBAssets/survey_age.png)  
   
 </details>
+</details>
+
+<details>
+  <summary><b>Share</b></summary>
+
+  
+</details>
+
+<details>
+  <summary><b>Recommendations</b></summary>
+    
+1.<b>Time: The tracker you never take off</b>    
+  
+The message is "you'll forget you're even wearing it" with Time's comfort, water resistance and no charging. Time's battery solves the sleep problem. Only 29% of Fitbit users tracked sleep consistently, and 31% never did. Some Fitbits models lack sleep tracking and those that don't require regular charging, which plausibly competes with overnight wear, exactly when sleep tracking should occur. Time's coin battery lasts six months, so it never has to come off, removing charging as a barrier.
+  
+_Evidence: Q5 sleep tracking, Q7 ease of use 3.22, Q38 non-disturbing 3.15._  
+
+2. <b>Win users through trial and referral, not advertising</b>  
+50% discover apps by trying them, 41% via health professionals, 38% via friends — only 9% through advertising. Extend the premium trial, build referral incentives, pursue professional endorsement. Where advertising is used, message on design and simplicity rather than features.  
+_Evidence: Q33, Q11 trust, Q7 design gap by age._
+
+3. <b>Lifecycle Marketing: Make the first two weeks count </b>  
+Concentrate marketing effort on the weeks immediately after purchase, because wear is bimodal and retention is decided early. Welcome sequences, early-engagement emails, first-insight prompts.
+_Evidence: Q1 bimodal wear, Q38 automatic setup 3.15._
+
+4. <b>Messaging Emphasis</b>  
+Lead communications with personalised data (i.e. wellness score) and don't promote community or social sharing features as 41% of the survey respondents say personalised feedback drives continued use whereas only 2% says social integration does. Only 8% track data to compare/compete with others whereas majority track for progress (78%) & patterns (70%) and personalised feedback (55%). 
+_Evidence: Q8, Q13 comparison 8%_
+
+<details>
+  <summary><b>Further Opportunities (outside marketing scope)</b></summary>  
+The analysis surfaced observations relevant to product and development teams rather than marketing:   
+  
+- <b>Manual logging is a friction point.</b> - Time's water, menstrual cycle and meditation features require manual input, while the survey shows low effort is a primary retention driver (40% cite non-disruptive use). The wellness score partly offsets this by rewarding logging, but reducing input friction is a product opportunity. 
+Idea: A double-press shortcut to log water.  
+
+- <b>Heart rate is absent from Time</b> - In the survey, it was a bundled top rated feature so it's individual importance could not be pertained. But it's worth testing separately before future product decisions.
+
+- <b>Invest in personalised feedback, not social features</b> - Personalised feedback is the strongest retention lever (41%) so recommendation 4 depends on the quality of the personal insights delivered - a development priority.  
+  
+</details>
+</details>
+
