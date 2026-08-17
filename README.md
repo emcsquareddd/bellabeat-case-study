@@ -557,13 +557,45 @@ Q38 - How important are these criteria for you to agree to install an applicatio
 <details>
   <summary><b>Share</b></summary>
 
+  **Key Insight 1**  
   
+![](BBAssets/wear_band.png)
+Bands Interpretation:
+Users either wear the tracker every day or stop completely — there's no casual middle ground. 
+Supports recommendation 3 - retention is decided early, so concentrate effort on the first weeks  
+
+**Key Insight 2**  
+![](BBAssets/wear_sleep.png)  
+Wear vs Sleep Intrepretation:
+Daily wear is near-total, but overnight tracking is rare. Showing the night is the gap  
+Supports recommendation 1 — Time's six-month battery removes charging as a barrier to overnight wear  
+
+**Key Insight 3**  
+![](BBAssets/hourly_activity.png)  
+Hourly Activity Interpretation:
+Movement is spread across the whole waking day; most activity is incidental rather than workouts  
+Supports recommendation 1 - Continuous passive tracking captures what workout logging misses  
+
+**Key Insight 4**  
+![](BBAssets/q8_motivation.png)  
+Motivators Interpretation:
+Continued use depends on personalised feedback and low-effort, non-disruptive design and not social features  
+Supports recommendation 4 - lead messaging with the wellness score, don't promote social sharing  
+
+**Key Insight 5**  
+![](BBAssets/q33_discovery.png)  
+Discovery Interpretation:
+Discovery is driven by trial and trusted recommendation, not paid channels  
+Supports recommendation 2 - win users through trial and referral  
+
+In summary: The behavioural and attitudinal evidence converge on the same conclusion — reduce user effort, deliver personalised insight, and don't build for competition. Women wear a passive tracker near-daily but under-use anything requiring effort, and they say the same thing directly: 40% cite non-disruptive use as their reason to keep going, while 2% want social features.  
+
 </details>
 
 <details>
   <summary><b>Recommendations</b></summary>
     
-1.<b>Time: The tracker you never take off</b>    
+1. <b>Time: The tracker you never take off</b>    
   
 The message is "you'll forget you're even wearing it" with Time's comfort, water resistance and no charging. Time's battery solves the sleep problem. Only 29% of Fitbit users tracked sleep consistently, and 31% never did. Some Fitbits models lack sleep tracking and those that don't require regular charging, which plausibly competes with overnight wear, exactly when sleep tracking should occur. Time's coin battery lasts six months, so it never has to come off, removing charging as a barrier.
   
@@ -590,7 +622,7 @@ Idea: A double-press shortcut to log water.
 
 - <b>Heart rate is absent from Time</b> - In the survey, it was a bundled top rated feature so it's individual importance could not be pertained. But it's worth testing separately before future product decisions.
 
-- <b>Invest in personalised feedback, not social features</b> - Personalised feedback is the strongest retention lever (41%) so recommendation 4 depends on the quality of the personal insights delivered - a development priority.  
+- <b>Invest in personalised feedback, not social features</b> - Personalised feedback is the strongest retention lever (41%) so recommendation 4 depends on the quality of the personal insights delivered - a development priority. 
   
 </details>
 </details>
