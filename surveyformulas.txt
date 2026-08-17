@@ -1,0 +1,67 @@
+# Survey analysis — formulas
+# Source: [dataset name], 814 respondents
+# Filtered to women (Q26 / column DD = 1): 528 respondents
+
+
+## Extraction
+=QUERY(RawData!A1:EK815, "SELECT A, W, X, Y, Z, AA, AB, AC, AD, AE, AF, AG, AH, AI, AJ, AK, AL, AM, AN, AO, AP, AQ, AR, AS, AT, AV, AW, AX, AY, AZ, BA, BB, DC, DD, DM, DN, DO, DP, DQ, DR, DS, EG, EH, EI, EJ, EK WHERE DD = 1", 1)
+
+## Column map
+Q7 - 22-28 - W-AC - Answers scale 1-4, Dont know or NA  
+Q8 - 29-30 - AD-AE - Answers 6 options or Open text for 'other'  
+Q9 - 31-34 - AF-AI - Answers scale 1-4, Dont know or NA  
+Q10 - 35-39 -  AJ-AN - Answers scale 1-4, Dont know or NA  
+Q11 - 40-45 - AO-AT - Answers 0) No, 1)Yes or Open text for 'other'  
+Q13 - 47-53 - AV- BB - Answers 0) No, 1)Yes or Open text for 'other'  
+Q25 - 106 - DC - 18-99 (I wanted to include this because we can maybe look all women backgrounds)  
+Q26 - 107 - DD -  0)Male, 1) Female, 2) Other  
+Q33 - 116-122 - DM-DS - Answers 0) No, 1)Yes or Open text for 'other'  
+Q38 - 136-140 - EG-EK - Answers scale 1-4, Dont know or NA  
+
+## Find & replace all "Don't know" & "NA" to blank cells 
+
+## Validation
+=MAX(B2:B29)   -> confirms no values above 4, so "Don't know" is not coded numerically
+
+## Summary statistics (dragged across all columns)
+=COUNT(B2:B529)
+=AVERAGE(B2:529)
+
+## Age sensitivity check on Q7 (Col B, drag across up to col H)
+=COUNTIFS(B$2:B$529, 1, $AG$2:$AG$529, "<=44")
+=COUNTIFS(B$2:B$529, 2, $AG$2:$AG$529, "<=44")
+=COUNTIFS(B$2:B$529, 3, $AG$2:$AG$529, "<=44")
+=COUNTIFS(B$2:B$529, 4, $AG$2:$AG$529, "<=44")
+
+=COUNTIFS(B$2:B$529, 1, $AG$2:$AG$529, ">=45")
+=COUNTIFS(B$2:B$529, 2, $AG$2:$AG$529, ">=45")
+=COUNTIFS(B$2:B$529, 3, $AG$2:$AG$529, ">=45")
+=COUNTIFS(B$2:B$529, 4, $AG$2:$AG$529, ">=45")
+
+Sum to check how many responded
+
+=COUNTIFS(B$2:B$529, "<>", $AG$2:$AG$529, "")     -> Cross check with respondents that didn't answer their age in Col AG (Answer should be below 9)
+
+## Q8 frequency counts
+=COUNTIF($I$2:$I$529,1)   -> Relevant personalised feedback
+=COUNTIF($I$2:$I$529,2)
+=COUNTIF($I$2:$I$529,3)
+=COUNTIF($I$2:$I$529,4)
+=COUNTIF($I$2:$I$529,5)
+=COUNTIF($I$2:$I$529,6)
+
+## Age sensitivity check on Q8
+=COUNTIFS($I$2:$I$529, 1, $AG$2:$AG$529, "<=44")
+=COUNTIFS($I$2:$I$529, 2, $AG$2:$AG$529, "<=44")
+=COUNTIFS($I$2:$I$529, 3, $AG$2:$AG$529, "<=44")
+=COUNTIFS($I$2:$I$529, 4, $AG$2:$AG$529, "<=44")
+=COUNTIFS($I$2:$I$529, 5, $AG$2:$AG$529, "<=44")
+=COUNTIFS($I$2:$I$529, 6, $AG$2:$AG$529, "<=44")
+
+## Age bands
+=COUNTIFS(AG2:AG529, ">=18", AG2:AG529, "<=24")
+=COUNTIFS(AG2:AG529, ">=25", AG2:AG529, "<=34")
+=COUNTIFS(AG2:AG529, ">=35", AG2:AG529, "<=44")
+=COUNTIFS(AG2:AG529, ">=45", AG2:AG529, "<=54")
+=COUNTIFS(AG2:AG529, ">=55", AG2:AG529, "<=64")
+=COUNTIF(AG2:AG529, ">=65")
