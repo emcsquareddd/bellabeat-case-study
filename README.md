@@ -1,5 +1,7 @@
 # Bellabeat Case Study
 
+![](BBAssets/Bellabeat_logo.png)  
+
 ## Background
 Bellabeat is a high-tech company that manufactures health-focused smart products. 
 Bellabeat offers a variety of these smart products that are targeted towards women to help inform, inspire and empower them with knowledge about their own health and habits.
